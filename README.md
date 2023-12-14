@@ -13,8 +13,8 @@
 ### [Function Example.sql](Function%20Example.sql)
 - Function Example demonstrates a function to display different messages based on the elevation of an airport.
 
-### [Procedure Example.sql](Procedure Example.sql)
+### [Procedure Example.sql](Procedure%20Example.sql)
 - Procedure Example demonstrates a procedure to concatenate all values in a field and separate them by columns (basically, collapsing all values in a column into a single value).
 
-### [Trigger Example.sql])Trigger Example.sql)
+### [Trigger Example.sql](Trigger%20Example.sql)
 - Trigger Example demonstrates a trigger (and the corresponding trigger function) to save the date a record was last updated in another table. This certainly could be paired with a second trigger to handle insertions, but I didn't do that as our bonus lectures are generally one hour.
