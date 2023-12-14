@@ -24,7 +24,7 @@ ALTER TABLE park_update
 	ADD COLUMN last_update DATE;
 
 
-CREATE OR REPLACE FUNCTION PARK_UPDATE_DATE() 
+CREATE OR REPLACE FUNCTION park_update_date() 
 -- RETURNS TRIGGER is necessary if we want to create a trigger.
 -- PostgreSQL does this a little differently than other relational 
 -- databases implement this.
@@ -40,8 +40,8 @@ BEGIN
 	-- park_id for the updated record.
 	UPDATE park_update
 	SET last_update = NOW()
-	WHERE park_id = New.park_id;
-	RETURN NEW;
+	WHERE park_id = new.park_id;
+	RETURN new;
 END;
 $$
 ;
@@ -52,13 +52,15 @@ $$
 -- of the data, while AFTER is used once a change has been completed.
 -- We also need to specify what action (INSERT, UPDATE, and/or DELETE)
 -- will cause the trigger to fire - basically, all our CRUD operations
--- save for SELECT.  
-CREATE OR REPLACE TRIGGER trig_after_park_update
+-- save for SELECT.
+-- NOTE: You can only CREATE or DROP triggers, PostgreSQL does not
+-- support a CREATE OR REPLACE
+CREATE TRIGGER trig_after_park_update
 -- In this case, after a row in park is updated, run the park_update_date
 -- function declared above
 AFTER UPDATE ON Park
 FOR EACH ROW
-	EXECUTE FUNCTION PARK_UPDATE_DATE()
+	EXECUTE FUNCTION park_update_date()
 ;
 
 -- To test this, start by verifying the park_update table is empty
