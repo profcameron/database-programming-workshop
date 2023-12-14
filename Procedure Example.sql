@@ -1,15 +1,14 @@
 -- Written against a PostgreSQL database 
--- Eric Cameron, Java Instructor, Tech Elevator, 04/16/2023
+-- Eric Cameron, Java Instructor, Tech Elevator
 -- Written to show a simple example of a procedure for a 
 -- bonus lecture.
 -- Procedure accepts no parameters.
 
--- This procedure will take all park name values from a 
--- Park table in the UnitedStates database we use 
--- at Tech Elevator and concatenate them into a single,
--- comma separated value.
+-- This procedure will take all airport name values from an 
+-- Airport table in the Airport database 
+-- and concatenate them into a single, comma separated value.
 
-CREATE OR REPLACE PROCEDURE proc_cat_parks()
+CREATE OR REPLACE PROCEDURE proc_cat_airports()
 
 -- PostgreSQL requires a language to be set
 LANGUAGE plpgsql AS
@@ -18,31 +17,31 @@ $$
 DECLARE
   -- variables are declared with variable name first, and then
   -- data type
-  -- parkRecord will be a record (similar to SqlRowSet in Java)
-	parkRecord RECORD;
-  -- CHAR is a normal data type
-	allParks CHAR(5000);
+  -- airportRecord will be a record (similar to SqlRowSet in Java)
+	airportRecord RECORD;
+  -- TEXT is a normal data type (like VARCHAR)
+	allAirports TEXT;
 BEGIN
-  -- Initialize allParks to a blank string
+  -- Initialize allAirports to a blank string
   -- (PostgreSQL can use either := or = to assign values to variables)
-  allParks := '';
+  allAirports := '';
 
   -- This is like a for each loop
   -- The query can be any query, it doesn't have to be as
   -- simple as this example
-  FOR parkRecord IN (SELECT park_name FROM park)
+  FOR airportRecord IN (SELECT name FROM airport)
   LOOP
     -- PostgreSQL uses || as a concatenation operator
     -- you can reference any field from the record
-    -- by referencing the parkRecord (the variable)
+    -- by referencing the airportRecord (the variable)
     -- declared above) followed by a dot, followed by
-    -- the field name (hence, parkRecord.park_name)
-  	allParks := allParks || parkRecord.park_name || ',';
+    -- the field name (hence, airportRecord.name)
+  	allAirports := allAirports || airportRecord.name || ',';
   END LOOP;
   -- RAISE NOTICE is used to print out a message 
-  RAISE NOTICE 'All park names: %', allParks;
+  RAISE NOTICE 'All airport names: %', allAirports;
 END;
 $$ ;
 
 -- Procedures can be executed using CALL.
-CALL proc_cat_parks();
+CALL proc_cat_airports();
