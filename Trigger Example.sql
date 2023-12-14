@@ -1,30 +1,28 @@
 -- Written against a PostgreSQL database 
--- Eric Cameron, Java Instructor, Tech Elevator, 04/16/2023
+-- Eric Cameron, Java Instructor, Tech Elevator
 -- Written to show a combination of a function and a trigger
 -- for a bonus lecture.
 
--- After someone updates a park's information, this will 
--- log the update date for that park's id in another
+-- After someone updates an airport's information, this will 
+-- log the update date for that airport's code in another
 -- table. To do this, we should create a table to store
 -- the date in (or add it to an existing table somewhere)
 
-
 -- The CREATE TABLE and ALTER TABLE are not necessary 
 -- for a trigger, just an example I used
--- This will take all park id values from a 
--- Park table in the UnitedStates database we use 
--- at Tech Elevator and create a table by running a query
+-- This will take all airport code values from a 
+-- airport table in the Airport database and
+-- create a table by running a query
 -- and directing the output to a new table
 -- We'll add a a column called last_update as a DATE 
 -- which will default to NULL.
-CREATE TABLE park_update AS (
-	SELECT park_id FROM park);
+CREATE TABLE airport_log AS (
+	SELECT code FROM airport);
 	
-ALTER TABLE park_update
+ALTER TABLE airport_log
 	ADD COLUMN last_update DATE;
 
-
-CREATE OR REPLACE FUNCTION park_update_date() 
+CREATE OR REPLACE FUNCTION airport_update_date() 
 -- RETURNS TRIGGER is necessary if we want to create a trigger.
 -- PostgreSQL does this a little differently than other relational 
 -- databases implement this.
@@ -34,49 +32,44 @@ LANGUAGE plpgsql AS
 -- We use the $$ as a delimiter for start and end of our procedure
 $$
 BEGIN
-	-- The action we want to perform when the park table is updated
-	-- is to update this park_update table and set the last_update
-	-- field to the current date. New.park_id is a reference to the
-	-- park_id for the updated record.
-	UPDATE park_update
+	-- The action we want to perform when a record in the airport table 
+	-- is updated - update the airport_log table and set the last_update
+	-- field to the current date. New.code is a reference to the
+	-- code for the updated record.
+	UPDATE airport_log
 	SET last_update = NOW()
-	WHERE park_id = new.park_id;
+	WHERE code = new.code;
 	RETURN new;
 END;
 $$
 ;
 
--- After declaring the function, we can declare a trigger to call that
--- function. The trigger can be done before or after a change to data
--- (BEFORE is commonly used before you delete, for example, make a copy
--- of the data, while AFTER is used once a change has been completed.
--- We also need to specify what action (INSERT, UPDATE, and/or DELETE)
--- will cause the trigger to fire - basically, all our CRUD operations
--- save for SELECT.
--- NOTE: You can only CREATE or DROP triggers, PostgreSQL does not
--- support a CREATE OR REPLACE
-CREATE TRIGGER trig_after_park_update
--- In this case, after a row in park is updated, run the park_update_date
+CREATE TRIGGER trig_after_airport_update
+-- In this case, after a row in airport is updated, run the airport_update_date
 -- function declared above
-AFTER UPDATE ON Park
+AFTER UPDATE ON airport
 FOR EACH ROW
-	EXECUTE FUNCTION park_update_date()
+	EXECUTE FUNCTION airport_update_date()
 ;
-
--- To test this, start by verifying the park_update table is empty
+	
+-- To test this, start by verifying the airport_log table is empty
 SELECT *
-FROM park_update
-ORDER BY park_id;
+FROM airport_log
+ORDER BY code;
+
+SELECT *
+FROM airport
+ORDER BY code;
 
 -- Then we update a record in our database (in this case, let's change the
--- area for Acadia, which is currently 198.6, to 198.5)
-UPDATE park
-SET area = 198.5
-WHERE park_name = 'Acadia';
+-- elevation for AAD - the first value alphabetically, which is currently 1001, 
+-- to 1000)
+UPDATE airport
+SET elevation = 1000
+WHERE code = 'AAD';
 
--- Re-run the same query and the results will show the record for Acadia
--- (which is record number 1 in our park database) was updated today
--- in this case, today is whatever day you're running the query
+-- Re-run the same query and the results will show the record for AAD
+-- was updated (whatever day you are running the program) 
 SELECT * 
-FROM park_update
-ORDER BY park_id;
+FROM airport_log
+ORDER BY code;
