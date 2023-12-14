@@ -10,7 +10,7 @@
 ### [airport.sql](airport.sql)
 - Creates and populates 200+ records into an airport table. Create a database and run this to load the values. Designed for PostgreSQL, but should be pretty generic.
 
-### [Function Example.sql](Function Example.sql)
+### [Function Example.sql](Function%20Example.sql)
 - Function Example demonstrates a function to display different messages based on the elevation of an airport.
 
 ### [Procedure Example.sql](Procedure Example.sql)
