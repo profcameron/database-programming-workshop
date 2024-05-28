@@ -1,6 +1,6 @@
 # Database Programming Bonus Lecture
 
-## Eric Cameron, Java Instructor, Tech Elevator
+## Eric Cameron
 ## Original date: 04/16/2023
 
 - There are three files for download that demonstrate functions, stored procedures, and triggers - things that are extra-curricular but hopefully interesting.
